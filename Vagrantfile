@@ -5,8 +5,9 @@ MASTER_IP       = "172.16.8.10"
 NODE_01_IP      = "172.16.8.11"
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "sjvair/ubuntu-20.04"
-  config.vm.box_version = "1.0.3"
+  #config.vm.box = "sjvair/ubuntu-20.04"
+  config.vm.box = "debian/buster64"
+  #config.vm.box_version = "1.0.3"
 
   boxes = [
     { :name => "master",  :ip => MASTER_IP,  :cpus => 1, :memory => 2048 },
@@ -21,6 +22,10 @@ Vagrant.configure("2") do |config|
       box.vm.provider "virtualbox" do |vb|
         vb.cpus = opts[:cpus]
         vb.memory = opts[:memory]
+      end
+      box.vm.provider "libvirt" do |lv|
+        lv.cpus = opts[:cpus]
+        lv.memory = opts[:memory]
       end
       box.vm.provision "shell", path:"./install-kubernetes-dependencies.sh"
       if box.vm.hostname == "master" then 

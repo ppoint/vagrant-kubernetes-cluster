@@ -3,12 +3,12 @@
 
 install_required_packages ()
 {
-sudo apt update
-sudo apt -y install curl apt-transport-https
+sudo apt-get update
+sudo apt-get -y install curl apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt update
-sudo apt -y install vim git curl wget kubelet=1.20.11-00 kubeadm=1.20.11-00 kubectl=1.20.11-00
+sudo apt-get update
+sudo apt-get -y install vim git curl wget kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 }
 
@@ -40,12 +40,12 @@ sudo sysctl --system
 
 install_docker_runtime () 
 {
-sudo apt update
-sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo apt update
-sudo apt install -y containerd.io docker-ce docker-ce-cli
+sudo apt-get update
+sudo apt-get install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install -y containerd.io docker-ce docker-ce-cli docker-buildx-plugin docker-compose-plugin
 sudo mkdir -p /etc/systemd/system/docker.service.d
 sudo tee /etc/docker/daemon.json <<EOF
 {
@@ -65,8 +65,16 @@ sudo systemctl enable docker
 sed -i 's/plugins.cri.systemd_cgroup = false/plugins.cri.systemd_cgroup = true/' /etc/containerd/config.toml
 }
 
+install_nerdctl_runtime () 
+{
+curl -fsSLO https://github.com/containerd/nerdctl/releases/download/v1.2.1/nerdctl-1.2.1-linux-amd64.tar.gz
+tar zxf nerdctl-1.2.1-linux-amd64.tar.gz
+sudo cp nerdctl /usr/local/bin
+}
+
 install_required_packages
 configure_hosts_file
 disable_swap
 configure_sysctl
 install_docker_runtime
+install_nerdctl_runtime
