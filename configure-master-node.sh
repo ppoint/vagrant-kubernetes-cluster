@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 master_node=172.16.8.10
 pod_network_cidr=192.168.84.0/16
@@ -30,7 +30,9 @@ sudo chown 900:900 /home/vagrant/.kube/config
 
 install_network_cni ()
 {
-kubectl apply -f /vagrant/kube-flannel.yml
+#kubectl apply -f /vagrant/kube-flannel.yml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
+kubectl create -f /vagrant/calico-custom-resources.yaml
 }
 
 initialize_master_node

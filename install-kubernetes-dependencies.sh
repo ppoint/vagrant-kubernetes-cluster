@@ -1,10 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 
 install_required_packages ()
 {
 sudo apt-get update
-sudo apt-get -y install curl apt-transport-https
+sudo apt-get -y install curl apt-transport-https gnupg
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
@@ -62,7 +62,11 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 sudo systemctl enable docker
 
-sed -i 's/plugins.cri.systemd_cgroup = false/plugins.cri.systemd_cgroup = true/' /etc/containerd/config.toml
+#sed -i 's/plugins.cri.systemd_cgroup = false/plugins.cri.systemd_cgroup = true/' /etc/containerd/config.toml
+containerd config dump > /etc/containerd/config.toml
+sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+sudo systemctl enable containerd
+sudo systemctl restart containerd
 }
 
 install_nerdctl_runtime () 
