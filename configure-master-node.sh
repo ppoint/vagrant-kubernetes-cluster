@@ -35,6 +35,18 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0
 kubectl create -f /vagrant/calico-custom-resources.yaml
 }
 
+install_helm ()
+{
+	curl -fsSLO https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz
+	tar zxf helm-v2.17.0-linux-amd64.tar.gz
+	cp linux-amd64/{helm,tiller} /usr/local/bin
+
+	kubectl create serviceaccount --namespace kube-system tiller
+	kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+	helm init --service-account tiller
+}
+
+
 initialize_master_node
 configure_kubectl
 install_network_cni

@@ -1,17 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-MASTER_IP       = "172.16.8.10"
-NODE_01_IP      = "172.16.8.11"
-
 Vagrant.configure("2") do |config|
   #config.vm.box = "sjvair/ubuntu-20.04"
   config.vm.box = "debian/buster64"
   #config.vm.box_version = "1.0.3"
 
   boxes = [
-    { :name => "master",  :ip => MASTER_IP,  :cpus => 1, :memory => 2048 },
-    { :name => "node-01", :ip => NODE_01_IP, :cpus => 1, :memory => 2048 },
+    { :name => "master",  :ip => "172.16.8.10", :cpus => 1, :memory => 2048 },
+    { :name => "node-01", :ip => "172.16.8.11", :cpus => 1, :memory => 2048 },
+    { :name => "node-02", :ip => "172.16.8.12", :cpus => 1, :memory => 2048 },
   ]
 
   boxes.each do |opts|
@@ -27,11 +25,12 @@ Vagrant.configure("2") do |config|
         lv.cpus = opts[:cpus]
         lv.memory = opts[:memory]
       end
+
       box.vm.provision "shell", path:"./install-kubernetes-dependencies.sh"
       if box.vm.hostname == "master" then 
         box.vm.provision "shell", path:"./configure-master-node.sh"
         end
-      if box.vm.hostname == "node-01" then ##TODO: create some regex to match worker hostnames
+      if box.vm.hostname.match(/^node/) then
         box.vm.provision "shell", path:"./configure-worker-nodes.sh"
       end
 
