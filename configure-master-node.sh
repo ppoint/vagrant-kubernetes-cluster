@@ -2,6 +2,7 @@
 
 master_node=172.16.8.10
 pod_network_cidr=192.168.84.0/16
+JOIN_COMMAND=/vagrant_data/join_command.sh
 
 initialize_master_node ()
 {
@@ -12,8 +13,8 @@ sudo kubeadm init --apiserver-advertise-address=$master_node --pod-network-cidr=
 
 create_join_command ()
 {
-kubeadm token create --print-join-command | tee /vagrant/join_command.sh
-chmod +x /vagrant/join_command.sh
+kubeadm token create --print-join-command | tee $JOIN_COMMAND
+chmod +x $JOIN_COMMAND
 }
 
 configure_kubectl () 

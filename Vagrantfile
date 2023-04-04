@@ -2,9 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  #config.vm.box = "sjvair/ubuntu-20.04"
   config.vm.box = "debian/buster64"
-  #config.vm.box_version = "1.0.3"
+  config.vm.synced_folder ".", "/vagrant_data"
 
   boxes = [
     { :name => "master",  :ip => "172.16.8.10", :cpus => 1, :memory => 2048 },
